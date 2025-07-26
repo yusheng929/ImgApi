@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "dev": "tsx src/index.js",
+    "app": "node lib/index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "log4js": "^6.9.1",
+    "redis": "^5.6.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/lodash": "^4.17.17",
+    "@types/node": "^24.0.3",
+    "eslint": "^9.29.0",
+    "neostandard": "^0.12.1",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>图片API</title>
+  <title>Ciallo~(∠・ω< )⌒☆<</title>
   <style>
     * {
       margin: 0;
@@ -13,8 +13,8 @@
     }
 
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #1a1a2e 100%);
       font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #1a1a2e 100%);
       min-height: 100vh;
       color: white;
       padding: 20px;
@@ -85,6 +85,116 @@
       display: flex;
       align-items: center;
       gap: 10px;
+    }
+
+    /* 搜索框样式 */
+    .search-container {
+      margin-bottom: 30px;
+      max-width: 400px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 15px 20px 15px 50px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 5px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      display: none;
+    }
+
+    .clear-search:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .clear-search.show {
+      display: block;
+    }
+
+    /* 搜索结果提示 */
+    .search-results-info {
+      margin-bottom: 20px;
+      font-size: 14px;
+      opacity: 0.8;
+      display: none;
+    }
+
+    .search-results-info.show {
+      display: block;
+    }
+
+    /* 无结果提示 */
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      display: none;
+    }
+
+    .no-results.show {
+      display: block;
+    }
+
+    .no-results-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.6;
+    }
+
+    .no-results-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      opacity: 0.8;
+    }
+
+    .no-results-subtitle {
+      font-size: 1rem;
+      opacity: 0.6;
     }
 
     .servers-grid {
@@ -233,6 +343,10 @@
       .button-group .action-btn {
         width: 100%;
       }
+
+      .search-container {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -242,7 +356,7 @@
     <!-- 主标题 -->
     <div class="main-title">
       <h1 class="title">Ciallo~(∠・ω< )⌒☆</h1>
-          <p class="subtitle">图片API</p>
+      <p class="subtitle">图片API</p>
     </div>
 
     <!-- 服务器运行时间 -->
@@ -255,13 +369,31 @@
     <div class="servers-section">
       <h2 class="section-title">🌐 API服务列表</h2>
 
-      <!-- 新增搜索栏 -->
-      <div class="search-container" style="margin-bottom: 25px;">
-        <input type="text" id="apiSearch" placeholder="搜索API服务..." style="width: 100%; padding: 12px 20px; border-radius: 12px; 
-                     border: 1px solid rgba(255, 255, 255, 0.2); 
-                     background: rgba(255, 255, 255, 0.1); 
-                     color: white; font-size: 16px;
-                     backdrop-filter: blur(15px);">
+      <!-- 搜索框 -->
+      <div class="search-container">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            class="search-input" 
+            id="searchInput" 
+            placeholder="搜索API服务..."
+            autocomplete="off"
+          >
+          <button class="clear-search" id="clearSearch" title="清除搜索">✕</button>
+        </div>
+      </div>
+
+      <!-- 搜索结果信息 -->
+      <div class="search-results-info" id="searchResultsInfo">
+        找到 <span id="resultsCount">0</span> 个匹配的API服务
+      </div>
+
+      <!-- 无结果提示 -->
+      <div class="no-results" id="noResults">
+        <div class="no-results-icon">🔍</div>
+        <div class="no-results-title">未找到匹配的API服务</div>
+        <div class="no-results-subtitle">请尝试其他关键词</div>
       </div>
 
       <div class="servers-grid" id="apiGrid">
@@ -276,10 +408,14 @@
   </div>
 
   <script>
-    // 存储原始API数据
-    let allApiData = []
+    // 全局变量存储原始API数据
+    let originalApiData = []
+    let currentSearchQuery = ''
 
     document.addEventListener('DOMContentLoaded', async () => {
+      // 初始化搜索功能
+      initializeSearch()
+
       // 1. 获取服务器状态数据
       const fetchData = async () => {
         try {
@@ -300,11 +436,11 @@
         // 更新服务器运行时间
         document.getElementById('serverUptime').textContent = uptime
 
-        // 存储原始数据
-        allApiData = apiData
+        // 保存原始数据
+        originalApiData = apiData
 
-        // 渲染API卡片
-        renderApis(apiData)
+        // 渲染API卡片（应用当前搜索过滤）
+        renderApis(filterApiData(apiData, currentSearchQuery))
       }
 
       // 3. 初始加载
@@ -322,68 +458,92 @@
           document.getElementById('serverUptime').textContent = await calculateUptime()
         }
       }, 1000)
-
-      // 5. 添加搜索功能
-      const searchInput = document.getElementById('apiSearch')
-      searchInput.addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase()
-        filterApis(searchTerm)
-      })
     })
 
-    async function calculateUptime () {
+    // 初始化搜索功能
+    function initializeSearch() {
+      const searchInput = document.getElementById('searchInput')
+      const clearSearch = document.getElementById('clearSearch')
+
+      // 搜索输入事件
+      searchInput.addEventListener('input', (e) => {
+        currentSearchQuery = e.target.value.trim()
+        
+        // 显示/隐藏清除按钮
+        if (currentSearchQuery) {
+          clearSearch.classList.add('show')
+        } else {
+          clearSearch.classList.remove('show')
+        }
+
+        // 执行搜索
+        performSearch(currentSearchQuery)
+      })
+
+      // 清除搜索
+      clearSearch.addEventListener('click', () => {
+        searchInput.value = ''
+        currentSearchQuery = ''
+        clearSearch.classList.remove('show')
+        performSearch('')
+      })
+
+      // 回车键搜索
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault()
+          performSearch(currentSearchQuery)
+        }
+      })
+    }
+
+    // 执行搜索
+    function performSearch(query) {
+      const filteredData = filterApiData(originalApiData, query)
+      renderApis(filteredData)
+      updateSearchResultsInfo(filteredData.length, query)
+    }
+
+    // 过滤API数据
+    function filterApiData(apiData, query) {
+      if (!query) return apiData
+      
+      return apiData.filter(api => 
+        api.name.toLowerCase().includes(query.toLowerCase())
+      )
+    }
+
+    // 更新搜索结果信息
+    function updateSearchResultsInfo(count, query) {
+      const searchResultsInfo = document.getElementById('searchResultsInfo')
+      const noResults = document.getElementById('noResults')
+      const resultsCount = document.getElementById('resultsCount')
+
+      if (query) {
+        if (count > 0) {
+          resultsCount.textContent = count
+          searchResultsInfo.classList.add('show')
+          noResults.classList.remove('show')
+        } else {
+          searchResultsInfo.classList.remove('show')
+          noResults.classList.add('show')
+        }
+      } else {
+        searchResultsInfo.classList.remove('show')
+        noResults.classList.remove('show')
+      }
+    }
+
+    async function calculateUptime() {
       const startResponse = await fetch('/api/time')
       const startTime = await startResponse.json()
       return startTime
     }
 
-    // 过滤API列表
-    function filterApis (searchTerm) {
-      if (!searchTerm) {
-        // 如果搜索框为空，显示所有API
-        renderApis(allApiData)
-        return
-      }
-
-      // 过滤并排序API
-      const filteredApis = allApiData
-        .filter(api =>
-          api.name.toLowerCase().includes(searchTerm) ||
-          api.path.toLowerCase().includes(searchTerm)
-            .sort((a, b) => {
-              // 优先按名称匹配度排序
-              const aNameMatch = a.name.toLowerCase().indexOf(searchTerm)
-              const bNameMatch = b.name.toLowerCase().indexOf(searchTerm)
-
-              // 如果名称匹配位置不同，匹配位置靠前的排在前面
-              if (aNameMatch !== bNameMatch) {
-                return aNameMatch - bNameMatch
-              }
-
-              // 如果名称匹配位置相同，按路径匹配度排序
-              const aPathMatch = a.path.toLowerCase().indexOf(searchTerm)
-              const bPathMatch = b.path.toLowerCase().indexOf(searchTerm)
-              return aPathMatch - bPathMatch
-            })
-        )
-
-      renderApis(filteredApis)
-    }
-
     // 渲染API卡片
-    function renderApis (apiData) {
+    function renderApis(apiData) {
       const grid = document.getElementById('apiGrid')
       grid.innerHTML = ''
-
-      if (apiData.length === 0) {
-        grid.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: 40px; 
-                     color: rgba(255,255,255,0.6);">
-            没有找到匹配的API服务
-          </div>
-        `
-        return
-      }
 
       apiData.forEach(api => {
         const card = document.createElement('div')
@@ -418,7 +578,7 @@
     }
 
     // 复制链接
-    function copyLink (apiName, button) {
+    function copyLink(apiName, button) {
       const url = `https://img.ys7z.com/image/${apiName}`
 
       navigator.clipboard.writeText(url).then(() => {
@@ -439,7 +599,7 @@
     }
 
     // 前往链接
-    function goToLink (apiName, button) {
+    function goToLink(apiName, button) {
       const url = `https://img.ys7z.com/image/${apiName}`
 
       // 按钮反馈
@@ -457,7 +617,7 @@
     }
 
     // 显示通知
-    function showNotification (message, isError = false) {
+    function showNotification(message, isError = false) {
       const notification = document.getElementById('notification')
       const text = document.getElementById('notificationText')
 

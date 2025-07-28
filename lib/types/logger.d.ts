@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import type { Logger as Log4jsType } from 'log4js';
-type loggerevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'mark' | 'off';
+export type loggerevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'mark' | 'off';
 export interface Logger extends Log4jsType {
     /** @description chalk模块 */
     chalk: typeof chalk;
@@ -50,4 +50,3 @@ export interface Logger extends Log4jsType {
      */
     ct: (level: loggerevel, name: string, ...args: any[]) => void;
 }
-export {};

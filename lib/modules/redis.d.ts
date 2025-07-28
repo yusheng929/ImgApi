@@ -1,2 +1,3 @@
 import { RedisClientType } from 'redis';
-export declare const redis: RedisClientType | undefined;
+declare const redis: RedisClientType | undefined;
+export default redis;

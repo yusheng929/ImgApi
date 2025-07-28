@@ -1,8 +1,18 @@
+import { loggerevel } from './logger.js';
 export interface cfg {
-    /** 端口 */
-    port: string;
+    /** 服务端配置 */
+    server: {
+        /** 服务监听地址 */
+        host: string;
+        /** 端口 */
+        port: number;
+        /** 日志等级 */
+        log_level: loggerevel;
+    };
     /** Redis 配置 */
     redis: {
+        /** 是否启用 Redis */
+        enable: boolean;
         /** Redis 地址 */
         host: string;
         /** Redis 端口 */

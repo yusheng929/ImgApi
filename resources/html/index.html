@@ -5,350 +5,350 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ciallo~(∠・ω< )⌒☆<</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+      <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
 
-    body {
-      font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #1a1a2e 100%);
-      min-height: 100vh;
-      color: white;
-      padding: 20px;
-    }
+        body {
+          font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #1a1a2e 100%);
+          min-height: 100vh;
+          color: white;
+          padding: 20px;
+        }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
+        .container {
+          max-width: 1400px;
+          margin: 0 auto;
+        }
 
-    /* 主标题 */
-    .main-title {
-      text-align: center;
-      margin-bottom: 40px;
-    }
+        /* 主标题 */
+        .main-title {
+          text-align: center;
+          margin-bottom: 40px;
+        }
 
-    .title {
-      font-size: 3rem;
-      font-weight: 900;
-      background: linear-gradient(45deg, #fff, #667eea, #764ba2);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 10px;
-    }
+        .title {
+          font-size: 3rem;
+          font-weight: 900;
+          background: linear-gradient(45deg, #fff, #667eea, #764ba2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 10px;
+        }
 
-    .subtitle {
-      font-size: 1.2rem;
-      opacity: 0.8;
-      font-weight: 300;
-    }
+        .subtitle {
+          font-size: 1.2rem;
+          opacity: 0.8;
+          font-weight: 300;
+        }
 
-    /* 服务器状态卡片 */
-    .server-status {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(15px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      margin-bottom: 40px;
-      text-align: center;
-    }
+        /* 服务器状态卡片 */
+        .server-status {
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 20px;
+          padding: 30px;
+          backdrop-filter: blur(15px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          margin-bottom: 40px;
+          text-align: center;
+        }
 
-    .uptime-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 15px;
-    }
+        .uptime-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-bottom: 15px;
+        }
 
-    .uptime-value {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #00d4aa;
-      margin-bottom: 10px;
-    }
+        .uptime-value {
+          font-size: 3rem;
+          font-weight: 800;
+          color: #00d4aa;
+          margin-bottom: 10px;
+        }
 
-    .uptime-label {
-      font-size: 1rem;
-      opacity: 0.8;
-    }
+        .uptime-label {
+          font-size: 1rem;
+          opacity: 0.8;
+        }
 
-    /* API服务器列表 */
-    .section-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+        /* API服务器列表 */
+        .section-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-bottom: 25px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
 
-    /* 搜索框样式 */
-    .search-container {
-      margin-bottom: 30px;
-      max-width: 400px;
-    }
+        /* 搜索框样式 */
+        .search-container {
+          margin-bottom: 30px;
+          max-width: 400px;
+        }
 
-    .search-box {
-      position: relative;
-      width: 100%;
-    }
+        .search-box {
+          position: relative;
+          width: 100%;
+        }
 
-    .search-input {
-      width: 100%;
-      padding: 15px 20px 15px 50px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 15px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(15px);
-      color: white;
-      font-size: 16px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
+        .search-input {
+          width: 100%;
+          padding: 15px 20px 15px 50px;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 15px;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(15px);
+          color: white;
+          font-size: 16px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+        }
 
-    .search-input::placeholder {
-      color: rgba(255, 255, 255, 0.6);
-    }
+        .search-input::placeholder {
+          color: rgba(255, 255, 255, 0.6);
+        }
 
-    .search-input:focus {
-      outline: none;
-      border-color: rgba(255, 255, 255, 0.5);
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
+        .search-input:focus {
+          outline: none;
+          border-color: rgba(255, 255, 255, 0.5);
+          background: rgba(255, 255, 255, 0.15);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
 
-    .search-icon {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.6);
-    }
+        .search-icon {
+          position: absolute;
+          left: 18px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 18px;
+          color: rgba(255, 255, 255, 0.6);
+        }
 
-    .clear-search {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: rgba(255, 255, 255, 0.6);
-      cursor: pointer;
-      font-size: 18px;
-      padding: 5px;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      display: none;
-    }
+        .clear-search {
+          position: absolute;
+          right: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.6);
+          cursor: pointer;
+          font-size: 18px;
+          padding: 5px;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+          display: none;
+        }
 
-    .clear-search:hover {
-      color: white;
-      background: rgba(255, 255, 255, 0.1);
-    }
+        .clear-search:hover {
+          color: white;
+          background: rgba(255, 255, 255, 0.1);
+        }
 
-    .clear-search.show {
-      display: block;
-    }
+        .clear-search.show {
+          display: block;
+        }
 
-    /* 搜索结果提示 */
-    .search-results-info {
-      margin-bottom: 20px;
-      font-size: 14px;
-      opacity: 0.8;
-      display: none;
-    }
+        /* 搜索结果提示 */
+        .search-results-info {
+          margin-bottom: 20px;
+          font-size: 14px;
+          opacity: 0.8;
+          display: none;
+        }
 
-    .search-results-info.show {
-      display: block;
-    }
+        .search-results-info.show {
+          display: block;
+        }
 
-    /* 无结果提示 */
-    .no-results {
-      text-align: center;
-      padding: 60px 20px;
-      display: none;
-    }
+        /* 无结果提示 */
+        .no-results {
+          text-align: center;
+          padding: 60px 20px;
+          display: none;
+        }
 
-    .no-results.show {
-      display: block;
-    }
+        .no-results.show {
+          display: block;
+        }
 
-    .no-results-icon {
-      font-size: 4rem;
-      margin-bottom: 20px;
-      opacity: 0.6;
-    }
+        .no-results-icon {
+          font-size: 4rem;
+          margin-bottom: 20px;
+          opacity: 0.6;
+        }
 
-    .no-results-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      opacity: 0.8;
-    }
+        .no-results-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-bottom: 10px;
+          opacity: 0.8;
+        }
 
-    .no-results-subtitle {
-      font-size: 1rem;
-      opacity: 0.6;
-    }
+        .no-results-subtitle {
+          font-size: 1rem;
+          opacity: 0.6;
+        }
 
-    .servers-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
+        .servers-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 20px;
+        }
 
-    .api-card {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 25px;
-      backdrop-filter: blur(15px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
-    }
+        .api-card {
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 20px;
+          padding: 25px;
+          backdrop-filter: blur(15px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+        }
 
-    .api-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-    }
+        .api-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
 
-    .api-name {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
+        .api-name {
+          font-size: 1.3rem;
+          font-weight: 700;
+          margin-bottom: 20px;
+        }
 
-    .api-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
+        .api-stats {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
+          margin-bottom: 20px;
+        }
 
-    .stat-item {
-      text-align: center;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 15px;
-    }
+        .stat-item {
+          text-align: center;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          padding: 15px;
+        }
 
-    .stat-label {
-      font-size: 0.8rem;
-      opacity: 0.7;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+        .stat-label {
+          font-size: 0.8rem;
+          opacity: 0.7;
+          margin-bottom: 8px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
 
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
+        .stat-value {
+          font-size: 1.5rem;
+          font-weight: 800;
+        }
 
-    .action-btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
+        .action-btn {
+          width: 100%;
+          padding: 12px;
+          border: none;
+          border-radius: 12px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          background: linear-gradient(45deg, #667eea, #764ba2);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
 
-    .button-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
+        .button-group {
+          display: flex;
+          gap: 10px;
+          margin-top: 20px;
+        }
 
-    .button-group .action-btn {
-      flex: 1;
-    }
+        .button-group .action-btn {
+          flex: 1;
+        }
 
-    .go-btn {
-      background: linear-gradient(45deg, #00d4aa, #26a69a);
-    }
+        .go-btn {
+          background: linear-gradient(45deg, #00d4aa, #26a69a);
+        }
 
-    .go-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 212, 170, 0.4);
-    }
+        .go-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(0, 212, 170, 0.4);
+        }
 
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-    }
+        .action-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
 
-    .action-btn.copied {
-      background: #00d4aa;
-    }
+        .action-btn.copied {
+          background: #00d4aa;
+        }
 
-    /* 通知 */
-    .notification {
-      position: fixed;
-      top: 30px;
-      right: 30px;
-      padding: 15px 20px;
-      background: #00d4aa;
-      color: white;
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      transform: translateX(400px);
-      transition: transform 0.4s ease;
-      z-index: 1000;
-      font-weight: 600;
-    }
+        /* 通知 */
+        .notification {
+          position: fixed;
+          top: 30px;
+          right: 30px;
+          padding: 15px 20px;
+          background: #00d4aa;
+          color: white;
+          border-radius: 12px;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+          transform: translateX(400px);
+          transition: transform 0.4s ease;
+          z-index: 1000;
+          font-weight: 600;
+        }
 
-    .notification.show {
-      transform: translateX(0);
-    }
+        .notification.show {
+          transform: translateX(0);
+        }
 
-    .notification.error {
-      background: #e74c3c;
-    }
+        .notification.error {
+          background: #e74c3c;
+        }
 
-    /* 响应式设计 */
-    @media (max-width: 768px) {
-      .servers-grid {
-        grid-template-columns: 1fr;
-      }
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+          .servers-grid {
+            grid-template-columns: 1fr;
+          }
 
-      .title {
-        font-size: 2rem;
-      }
+          .title {
+            font-size: 2rem;
+          }
 
-      .api-stats {
-        grid-template-columns: 1fr;
-      }
+          .api-stats {
+            grid-template-columns: 1fr;
+          }
 
-      .button-group {
-        flex-direction: column;
-        gap: 8px;
-      }
+          .button-group {
+            flex-direction: column;
+            gap: 8px;
+          }
 
-      .button-group .action-btn {
-        width: 100%;
-      }
+          .button-group .action-btn {
+            width: 100%;
+          }
 
-      .search-container {
-        max-width: 100%;
-      }
-    }
-  </style>
+          .search-container {
+            max-width: 100%;
+          }
+        }
+      </style>
 </head>
 
 <body>
@@ -356,7 +356,7 @@
     <!-- 主标题 -->
     <div class="main-title">
       <h1 class="title">Ciallo~(∠・ω< )⌒☆</h1>
-      <p class="subtitle">图片API</p>
+          <p class="subtitle">图片API</p>
     </div>
 
     <!-- 服务器运行时间 -->
@@ -373,13 +373,7 @@
       <div class="search-container">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input 
-            type="text" 
-            class="search-input" 
-            id="searchInput" 
-            placeholder="搜索API服务..."
-            autocomplete="off"
-          >
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索API服务..." autocomplete="off">
           <button class="clear-search" id="clearSearch" title="清除搜索">✕</button>
         </div>
       </div>
@@ -461,14 +455,14 @@
     })
 
     // 初始化搜索功能
-    function initializeSearch() {
+    function initializeSearch () {
       const searchInput = document.getElementById('searchInput')
       const clearSearch = document.getElementById('clearSearch')
 
       // 搜索输入事件
       searchInput.addEventListener('input', (e) => {
         currentSearchQuery = e.target.value.trim()
-        
+
         // 显示/隐藏清除按钮
         if (currentSearchQuery) {
           clearSearch.classList.add('show')
@@ -498,23 +492,23 @@
     }
 
     // 执行搜索
-    function performSearch(query) {
+    function performSearch (query) {
       const filteredData = filterApiData(originalApiData, query)
       renderApis(filteredData)
       updateSearchResultsInfo(filteredData.length, query)
     }
 
     // 过滤API数据
-    function filterApiData(apiData, query) {
+    function filterApiData (apiData, query) {
       if (!query) return apiData
-      
-      return apiData.filter(api => 
+
+      return apiData.filter(api =>
         api.name.toLowerCase().includes(query.toLowerCase())
       )
     }
 
     // 更新搜索结果信息
-    function updateSearchResultsInfo(count, query) {
+    function updateSearchResultsInfo (count, query) {
       const searchResultsInfo = document.getElementById('searchResultsInfo')
       const noResults = document.getElementById('noResults')
       const resultsCount = document.getElementById('resultsCount')
@@ -534,14 +528,14 @@
       }
     }
 
-    async function calculateUptime() {
+    async function calculateUptime () {
       const startResponse = await fetch('/api/time')
       const startTime = await startResponse.json()
       return startTime
     }
 
     // 渲染API卡片
-    function renderApis(apiData) {
+    function renderApis (apiData) {
       const grid = document.getElementById('apiGrid')
       grid.innerHTML = ''
 
@@ -578,8 +572,8 @@
     }
 
     // 复制链接
-    function copyLink(apiName, button) {
-      const url = `https://img.ys7z.com/image/${apiName}`
+    function copyLink (apiName, button) {
+      const url = `${window.location.href}image/${apiName}`
 
       navigator.clipboard.writeText(url).then(() => {
         // 按钮反馈
@@ -599,8 +593,8 @@
     }
 
     // 前往链接
-    function goToLink(apiName, button) {
-      const url = `https://img.ys7z.com/image/${apiName}`
+    function goToLink (apiName, button) {
+      const url = `${window.location.href}image/${apiName}`
 
       // 按钮反馈
       const originalText = button.innerHTML
@@ -617,7 +611,7 @@
     }
 
     // 显示通知
-    function showNotification(message, isError = false) {
+    function showNotification (message, isError = false) {
       const notification = document.getElementById('notification')
       const text = document.getElementById('notificationText')
 

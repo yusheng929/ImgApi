@@ -362,7 +362,7 @@
     <!-- 服务器运行时间 -->
     <div class="server-status">
       <div class="uptime-title">🖥️ 服务器运行时间</div>
-      <div class="uptime-value" id="serverUptime">0</div>
+      <div class="uptime-value" id="serverUptime">0天 0小时 0分钟 0秒</div>
     </div>
 
     <!-- API列表 -->
@@ -409,49 +409,41 @@
     document.addEventListener('DOMContentLoaded', async () => {
       // 初始化搜索功能
       initializeSearch()
-
-      // 1. 获取服务器状态数据
-      const fetchData = async () => {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+      const socketUrl = `${protocol}//${window.location.host}/ws`
+      const socket = new WebSocket(socketUrl)
+      socket.onopen = () => {
+        console.log('WebSocket连接已建立')
+      }
+      socket.onclose = () => {
+        console.log('WebSocket连接已关闭, 尝试重新连接...')
+        setTimeout(() => {
+          window.location.reload()
+        }, 5000)
+      }
+      socket.onerror = (error) => {
+        console.error('WebSocket连接错误:', error)
+        showNotification('WebSocket连接错误,请刷新页面', true)
+      }
+      socket.onmessage = (event) => {
         try {
-          const response = await fetch('/api/status')
-          if (!response.ok) throw new Error('网络响应错误')
-          return await response.json()
-        } catch (error) {
-          console.error('获取状态失败:', error)
-          showNotification('获取数据失败，请刷新页面', true)
-          return { uptime: "0天 0小时 0分钟 0秒", apiData: [] }
-        }
+          const { type, data } = JSON.parse(event.data)
+          switch (type) {
+            case 'uptime':
+              document.getElementById('serverUptime').textContent = data
+              break
+            case 'apiData':
+              originalApiData = data
+              renderApis(filterApiData(originalApiData, currentSearchQuery))
+              break
+            case 'init':
+              document.getElementById('serverUptime').textContent = data.uptime
+              originalApiData = data.apiData
+              renderApis(filterApiData(originalApiData, currentSearchQuery))
+              break
+          }
+        } catch (e) { }
       }
-
-      // 2. 更新页面数据
-      const updatePageData = async () => {
-        const { uptime, apiData } = await fetchData()
-
-        // 更新服务器运行时间
-        document.getElementById('serverUptime').textContent = uptime
-
-        // 保存原始数据
-        originalApiData = apiData
-
-        // 渲染API卡片（应用当前搜索过滤）
-        renderApis(filterApiData(apiData, currentSearchQuery))
-      }
-
-      // 3. 初始加载
-      await updatePageData()
-
-      // 4. 设置定时器每秒更新运行时间
-      let lastUpdate = Date.now()
-      setInterval(async () => {
-        // 每5秒更新一次完整数据（包括访问次数）
-        if (Date.now() - lastUpdate > 5000) {
-          await updatePageData()
-          lastUpdate = Date.now()
-        } else {
-          // 每秒只更新运行时间
-          document.getElementById('serverUptime').textContent = await calculateUptime()
-        }
-      }, 1000)
     })
 
     // 初始化搜索功能

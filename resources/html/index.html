@@ -416,10 +416,7 @@
         console.log('WebSocket连接已建立')
       }
       socket.onclose = () => {
-        console.log('WebSocket连接已关闭, 尝试重新连接...')
-        setTimeout(() => {
-          window.location.reload()
-        }, 5000)
+        console.log('WebSocket连接已关闭, 请刷新页面')
       }
       socket.onerror = (error) => {
         console.error('WebSocket连接错误:', error)

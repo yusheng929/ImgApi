@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片文件夹管理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: url('https://img.ys7z.com/image/loli') center center/cover no-repeat fixed,
+        linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: visible;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      color: #1f2937;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .route-display {
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: #1f2937;
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #1f2937;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      color: #1f2937;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-info {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #2563eb;
+    }
+
+    .btn-warning {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background: #d97706;
+    }
+
+    .content {
+      padding: 32px;
+    }
+
+    .table-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #1f2937;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      vertical-align: middle;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* 确保表格行不可点击 */
+    tr {
+      pointer-events: none;
+    }
+
+    /* 只有按钮可以点击 */
+    .btn,
+    button {
+      pointer-events: auto;
+    }
+
+    .folder-name {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .folder-alias {
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .image-count {
+      background: #ddd6fe;
+      color: #7c3aed;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      z-index: 99998;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      min-width: 160px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      z-index: 99999;
+      margin-top: 4px;
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #1f2937;
+      font-weight: 600;
+      pointer-events: auto;
+      position: relative;
+      z-index: 100000;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      margin: 10% auto;
+      padding: 0;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    /* 重命名弹窗专用样式 - 不使用毛玻璃效果 */
+    .modal-content.solid {
+      background: #ffffff;
+      backdrop-filter: none;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header.solid {
+      background: #f8fafc;
+      backdrop-filter: none;
+      border-bottom: 1px solid #e5e7eb;
+      color: #1f2937;
+    }
+
+    .modal-body.solid {
+      background: #ffffff;
+      color: #1f2937;
+    }
+
+    .modal-footer.solid {
+      background: #f8fafc;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .form-input.solid {
+      background: #ffffff;
+      backdrop-filter: none;
+      border: 2px solid #e5e7eb;
+      color: #1f2937;
+    }
+
+    .form-input.solid:focus {
+      border-color: #4f46e5;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      color: #1f2937;
+      padding: 20px 24px;
+      border-radius: 16px 16px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .close {
+      background: none;
+      border: none;
+      color: #1f2937;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .close:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .close.solid:hover {
+      background: #e5e7eb;
+    }
+
+    .modal-body {
+      padding: 24px;
+      color: #1f2937;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-label.required::after {
+      content: " *";
+      color: #ef4444;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      color: #1f2937;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: rgba(79, 70, 229, 0.6);
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .modal-footer {
+      padding: 20px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    /* 上传进度样式 */
+    .upload-progress {
+      margin-top: 16px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .upload-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .upload-item:last-child {
+      border-bottom: none;
+    }
+
+    .upload-filename {
+      font-size: 14px;
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    .upload-status {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .upload-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .upload-error {
+      background: #ef4444;
+      color: white;
+    }
+
+    .upload-uploading {
+      background: #f59e0b;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .header-right {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 600px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <h1>📁 图片文件夹管理</h1>
+        <div class="route-display" id="currentRoute">/</div>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-secondary" onclick="refreshPage()">
+          🔄 刷新
+        </button>
+        <div class="dropdown">
+          <button class="btn btn-primary" onclick="toggleOperations()">
+            ⚡ 操作
+          </button>
+          <div class="dropdown-content" id="operationsDropdown">
+            <div class="dropdown-item" onclick="openCreateFolderModal()">
+              📁 创建文件夹
+            </div>
+            <div class="dropdown-item" onclick="uploadFiles()">
+              📤 上传文件
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="table-container">
+        <table id="foldersTable">
+          <thead>
+            <tr>
+              <th>文件夹名称</th>
+              <th>文件夹别名</th>
+              <th>图片数量</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="foldersTableBody">
+            <!-- 数据将通过JavaScript动态插入 -->
+          </tbody>
+        </table>
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <div class="empty-state-icon">📂</div>
+          <h3 style="color: #1f2937;">暂无文件夹</h3>
+          <p style="color: #1f2937;">点击右上角的"操作"按钮创建第一个文件夹</p>
+        </div>
+      </div>
+
+      <!-- 上传进度显示 -->
+      <div id="uploadProgress" class="upload-progress" style="display: none;">
+        <h4 style="margin-bottom: 12px; color: #1f2937;">上传进度</h4>
+        <div id="uploadList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 创建文件夹弹窗 -->
+  <div id="createFolderModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">创建文件夹</h2>
+        <button class="close" onclick="closeCreateFolderModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="createFolderForm">
+          <div class="form-group">
+            <label class="form-label required" for="folderName">文件夹名称</label>
+            <input type="text" id="folderName" class="form-input" placeholder="请输入文件夹名称" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="folderAlias">文件夹别名</label>
+            <input type="text" id="folderAlias" class="form-input" placeholder="请输入文件夹别名（可选）">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeCreateFolderModal()">取消</button>
+        <button class="btn btn-primary" onclick="createFolder()">创建</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 重命名文件夹弹窗 - 不使用毛玻璃效果 -->
+  <div id="renameFolderModal" class="modal">
+    <div class="modal-content solid">
+      <div class="modal-header solid">
+        <h2 class="modal-title">重命名文件夹</h2>
+        <button class="close solid" onclick="closeRenameFolderModal()">&times;</button>
+      </div>
+      <div class="modal-body solid">
+        <form id="renameFolderForm">
+          <div class="form-group">
+            <label class="form-label required" for="newFolderName">新文件夹名称</label>
+            <input type="text" id="newFolderName" class="form-input solid" placeholder="请输入新的文件夹名称" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="newFolderAlias">新文件夹别名</label>
+            <input type="text" id="newFolderAlias" class="form-input solid" placeholder="请输入新的文件夹别名（可选）">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer solid">
+        <button class="btn btn-secondary" onclick="closeRenameFolderModal()">取消</button>
+        <button class="btn btn-primary" onclick="confirmRename()">确认重命名</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 页面加载时渲染数据
+    document.addEventListener('DOMContentLoaded', async () => {
+      const foldersData = await (await fetch('/admin/file/getinfo')).json()
+      console.log(foldersData)
+      renderFoldersTable(foldersData)
+    })
+
+    // 渲染文件夹表格
+    function renderFoldersTable (foldersData) {
+      const tableBody = document.getElementById('foldersTableBody')
+      const emptyState = document.getElementById('emptyState')
+
+      if (foldersData.length === 0) {
+        tableBody.style.display = 'none'
+        emptyState.style.display = 'block'
+        return
+      }
+
+      tableBody.style.display = ''
+      emptyState.style.display = 'none'
+
+      tableBody.innerHTML = foldersData.map(folder => `
+                <tr>
+                    <td>
+                        <div class="folder-name">${folder.name}</div>
+                    </td>
+                    <td>
+                        <div class="folder-alias">${folder.alias || '-'}</div>
+                    </td>
+                    <td>
+                        <span class="image-count">${folder.match} 张</span>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-small btn-warning" onclick="renameFolder('${folder.name}')">
+                                ✏️ 重命名
+                            </button>
+                            <button class="btn btn-small btn-primary" onclick="viewDetails('${folder.name}')">
+                                👁️ 详情
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('')
+    }
+
+    // 刷新页面
+    function refreshPage () {
+      // 实际项目中这里会重新获取数据
+      location.reload()
+    }
+
+    // 切换操作下拉菜单
+    function toggleOperations () {
+      const dropdown = document.getElementById('operationsDropdown')
+      dropdown.classList.toggle('show')
+    }
+
+    // 点击其他地方关闭下拉菜单
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('.dropdown')) {
+        const dropdowns = document.getElementsByClassName('dropdown-content')
+        for (let i = 0; i < dropdowns.length; i++) {
+          dropdowns[i].classList.remove('show')
+        }
+      }
+    })
+
+    // 打开创建文件夹弹窗
+    function openCreateFolderModal () {
+      document.getElementById('createFolderModal').style.display = 'block'
+      document.getElementById('folderName').focus()
+      // 关闭下拉菜单
+      document.getElementById('operationsDropdown').classList.remove('show')
+    }
+
+    // 关闭创建文件夹弹窗
+    function closeCreateFolderModal () {
+      document.getElementById('createFolderModal').style.display = 'none'
+      document.getElementById('createFolderForm').reset()
+    }
+
+    // 创建文件夹
+    async function createFolder () {
+      const folderName = document.getElementById('folderName').value.trim()
+      const folderAlias = document.getElementById('folderAlias').value.trim()
+
+      if (!folderName) {
+        alert('请输入文件夹名称')
+        return
+      }
+
+      try {
+        // 发送POST请求创建文件夹
+        const response = await fetch('/api/folders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: folderName,
+            alias: folderAlias || null
+          })
+        })
+
+        if (response.ok) {
+          closeCreateFolderModal()
+          // 刷新页面或重新获取数据
+          refreshPage()
+        } else {
+          const error = await response.text()
+          alert('创建失败: ' + error)
+        }
+      } catch (error) {
+        console.error('创建文件夹失败:', error)
+        alert('创建失败，请稍后重试')
+      }
+    }
+
+    // 上传多个文件
+    function uploadFiles () {
+      // 创建文件输入元素
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.multiple = true
+      input.accept = 'image/*'
+
+      input.onchange = function (event) {
+        const files = event.target.files
+        if (files.length > 0) {
+          handleFileUpload(files)
+        }
+      }
+
+      input.click()
+      // 关闭下拉菜单
+      document.getElementById('operationsDropdown').classList.remove('show')
+    }
+
+    // 处理文件上传
+    async function handleFileUpload (files) {
+      const uploadProgress = document.getElementById('uploadProgress')
+      const uploadList = document.getElementById('uploadList')
+
+      // 显示上传进度区域
+      uploadProgress.style.display = 'block'
+      uploadList.innerHTML = ''
+
+      // 为每个文件创建上传项
+      const uploadItems = []
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const uploadItem = document.createElement('div')
+        uploadItem.className = 'upload-item'
+        uploadItem.innerHTML = `
+                    <span class="upload-filename">${file.name}</span>
+                    <span class="upload-status upload-uploading">上传中...</span>
+                `
+        uploadList.appendChild(uploadItem)
+        uploadItems.push({ element: uploadItem, file: file })
+      }
+
+      // 逐个上传文件
+      for (let i = 0; i < uploadItems.length; i++) {
+        const item = uploadItems[i]
+        const statusElement = item.element.querySelector('.upload-status')
+
+        try {
+          // 创建FormData
+          const formData = new FormData()
+          formData.append('file', item.file)
+
+          // 发送上传请求
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+          })
+
+          if (response.ok) {
+            statusElement.textContent = '上传成功'
+            statusElement.className = 'upload-status upload-success'
+          } else {
+            throw new Error('上传失败')
+          }
+        } catch (error) {
+          console.error('上传文件失败:', error)
+          statusElement.textContent = '上传失败'
+          statusElement.className = 'upload-status upload-error'
+        }
+      }
+
+      // 3秒后隐藏上传进度
+      setTimeout(() => {
+        uploadProgress.style.display = 'none'
+        // 刷新页面以显示新上传的文件
+        refreshPage()
+      }, 3000)
+    }
+
+    // 当前操作的文件夹名称
+    let currentOperatingFolder = ''
+
+    // 重命名文件夹（合并了设置别名功能）
+    function renameFolder (folderName) {
+      currentOperatingFolder = folderName
+      const folder = foldersData.find(f => f.name === folderName)
+
+      // 填充当前的文件夹名称和别名
+      document.getElementById('newFolderName').value = folderName
+      document.getElementById('newFolderAlias').value = folder ? (folder.alias || '') : ''
+
+      document.getElementById('renameFolderModal').style.display = 'block'
+      document.getElementById('newFolderName').focus()
+    }
+
+    // 关闭重命名弹窗
+    function closeRenameFolderModal () {
+      document.getElementById('renameFolderModal').style.display = 'none'
+      document.getElementById('renameFolderForm').reset()
+      currentOperatingFolder = ''
+    }
+
+    // 确认重命名（包含别名设置）
+    async function confirmRename () {
+      const newName = document.getElementById('newFolderName').value.trim()
+      const newAlias = document.getElementById('newFolderAlias').value.trim()
+
+      if (!newName) {
+        alert('请输入新的文件夹名称')
+        return
+      }
+
+      try {
+        // 发送重命名请求（包含名称和别名）
+        const response = await fetch(`/api/folders/${currentOperatingFolder}/rename`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            newName: newName,
+            newAlias: newAlias || null
+          })
+        })
+
+        if (response.ok) {
+          closeRenameFolderModal()
+          refreshPage()
+        } else {
+          const error = await response.text()
+          alert('重命名失败: ' + error)
+        }
+      } catch (error) {
+        console.error('重命名失败:', error)
+        alert('重命名失败，请稍后重试')
+      }
+    }
+
+    // 查看详情
+    function viewDetails (folderName) {
+      // 跳转到文件夹详情页面
+      window.location.href = `/${folderName}`
+    }
+
+    // 修改ESC键关闭弹窗功能
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        closeCreateFolderModal()
+        closeRenameFolderModal()
+      }
+    })
+
+    // 为创建文件夹表单添加回车键提交
+    document.getElementById('createFolderForm').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        createFolder()
+      }
+    })
+
+    // 为重命名表单添加回车键提交
+    document.getElementById('renameFolderForm').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        confirmRename()
+      }
+    });
+  </script>
+</body>
+
+</html>

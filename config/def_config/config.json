@@ -2,15 +2,11 @@
   "server": {
     "host": "0.0.0.0",
     "port": 3000,
-    "log_level": "info"
+    "log_level": "info",
+    "log_days_to_keep": 7
   },
-  "redis": {
-    "enable": true,
-    "host": "127.0.0.1",
-    "port": 6379,
-    "username": "",
-    "password": "",
-    "db": 0,
-    "errcount": 5
+  "admin": {
+    "username": "admin",
+    "password": "admin"
   }
 }

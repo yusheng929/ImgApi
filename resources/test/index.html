@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理员面板</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-sidebar: #2c3e50;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --text-sidebar: #ecf0f1;
+      --border-color: #e1e5e9;
+      --accent-color: #3498db;
+      --hover-color: #34495e;
+      --input-bg: #ffffff;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      --sidebar-width: 250px;
+      --sidebar-collapsed-width: 60px;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #2d2d2d;
+      --bg-sidebar: #1e1e1e;
+      --text-primary: #ffffff;
+      --text-secondary: #cccccc;
+      --text-sidebar: #ffffff;
+      --border-color: #404040;
+      --accent-color: #4a9eff;
+      --hover-color: #333333;
+      --input-bg: #2d2d2d;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* 侧边栏样式 */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-sidebar);
+      color: var(--text-sidebar);
+      transition: width 0.3s ease;
+      position: fixed;
+      height: 100vh;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed {
+      width: var(--sidebar-collapsed-width);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+    }
+
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar.collapsed .sidebar-title {
+      opacity: 0;
+    }
+
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      color: var(--text-sidebar);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      min-width: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-toggle:hover {
+      background-color: var(--hover-color);
+    }
+
+    .sidebar-nav {
+      padding: 20px 0;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      color: var(--text-sidebar);
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      position: relative;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background-color: var(--hover-color);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: var(--accent-color);
+    }
+
+    .nav-icon {
+      font-size: 18px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .nav-text {
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar.collapsed .nav-text {
+      opacity: 0;
+    }
+
+    .sidebar.collapsed .nav-item {
+      padding: 12px;
+      justify-content: center;
+    }
+
+    .sidebar.collapsed .nav-icon {
+      margin-right: 0;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      padding: 0 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .sidebar.collapsed .sidebar-footer {
+      padding: 0 10px;
+      justify-content: center;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-sidebar);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 34px;
+    }
+
+    .icon-btn:hover {
+      background-color: var(--hover-color);
+    }
+
+    /* 主内容区域 */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      transition: margin-left 0.3s ease;
+      background-color: var(--bg-secondary);
+      min-height: 100vh;
+    }
+
+    .main-content.collapsed {
+      margin-left: var(--sidebar-collapsed-width);
+    }
+
+    .content-header {
+      background-color: var(--bg-primary);
+      padding: 20px 30px;
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mobile-toggle {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--text-primary);
+      padding: 8px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      display: none;
+    }
+
+    .mobile-toggle:hover {
+      background-color: var(--border-color);
+    }
+
+    .content-body {
+      padding: 30px;
+    }
+
+    .settings-panel {
+      background-color: var(--bg-primary);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 30px;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-primary);
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .panel-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .panel-body {
+      padding: 30px;
+    }
+
+    .config-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 16px;
+      background-color: var(--accent-color);
+      margin-right: 10px;
+      border-radius: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--input-bg);
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-color);
+    }
+
+    .save-btn {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: 20px;
+    }
+
+    .save-btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-1px);
+    }
+
+    .save-btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    [data-theme="dark"] .alert-success {
+      background-color: #1e4620;
+      color: #75b798;
+      border: 1px solid #2d5a31;
+    }
+
+    [data-theme="dark"] .alert-error {
+      background-color: #4a1e1e;
+      color: #f5a3a3;
+      border: 1px solid #5a2d2d;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width);
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .mobile-toggle {
+        display: block;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .content-body {
+        padding: 20px;
+      }
+
+      .panel-body {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    侧边栏
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">管理面板</h2>
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <span id="toggleIcon">‹</span>
+        </button>
+      </div>
+      <div class="sidebar-nav">
+        <button class="nav-item active" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">设置</span>
+        </button>
+      </div>
+      <div class="sidebar-footer">
+        <a href="https://github.com" target="_blank" class="icon-btn" title="GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+          </svg>
+        </a>
+        <button class="icon-btn" id="themeToggle" title="切换主题">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </nav>
+
+    主内容区域
+    <main class="main-content" id="mainContent">
+      <header class="content-header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <button class="mobile-toggle" id="mobileToggle">
+            ☰
+          </button>
+          <h1>系统设置</h1>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <div id="alertContainer"></div>
+
+        <div class="settings-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">配置管理</h2>
+            <p class="panel-subtitle">管理系统的各项配置参数</p>
+          </div>
+          <div class="panel-body">
+            <form id="configForm">
+              服务器配置
+              <div class="config-section">
+                <h3 class="section-title">服务器配置</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="serverHost">主机地址</label>
+                    <input type="text" id="serverHost" name="server.host" class="form-input" placeholder="0.0.0.0">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="serverPort">端口</label>
+                    <input type="number" id="serverPort" name="server.port" class="form-input" placeholder="3000">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="logLevel">日志级别</label>
+                  <select id="logLevel" name="server.log_level" class="form-input">
+                    <option value="debug">Debug</option>
+                    <option value="info">Info</option>
+                    <option value="warn">Warn</option>
+                    <option value="error">Error</option>
+                  </select>
+                </div>
+              </div>
+
+              Redis配置
+              <div class="config-section">
+                <h3 class="section-title">Redis配置</h3>
+                <div class="form-group">
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="redisEnable" name="redis.enable" class="checkbox">
+                    <label class="form-label" for="redisEnable">启用Redis</label>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="redisHost">Redis主机</label>
+                    <input type="text" id="redisHost" name="redis.host" class="form-input" placeholder="127.0.0.1">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="redisPort">Redis端口</label>
+                    <input type="number" id="redisPort" name="redis.port" class="form-input" placeholder="6379">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="redisUsername">用户名</label>
+                    <input type="text" id="redisUsername" name="redis.username" class="form-input" placeholder="可选">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="redisPassword">密码</label>
+                    <input type="password" id="redisPassword" name="redis.password" class="form-input" placeholder="可选">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="redisDb">数据库</label>
+                    <input type="number" id="redisDb" name="redis.db" class="form-input" placeholder="0">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="redisErrcount">错误计数</label>
+                    <input type="number" id="redisErrcount" name="redis.errcount" class="form-input" placeholder="5">
+                  </div>
+                </div>
+              </div>
+
+              管理员配置
+              <div class="config-section">
+                <h3 class="section-title">管理员配置</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="adminUsername">管理员用户名</label>
+                    <input type="text" id="adminUsername" name="admin.username" class="form-input" placeholder="admin">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="adminPassword">管理员密码</label>
+                    <input type="password" id="adminPassword" name="admin.password" class="form-input"
+                      placeholder="admin">
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="save-btn" id="saveBtn">
+                保存配置
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    class AdminPanel {
+      constructor () {
+        this.token = localStorage.getItem('adminToken') || ''
+        this.config = {}
+        this.init()
+      }
+
+      init () {
+        this.setupEventListeners()
+        this.loadConfig()
+        this.initTheme()
+      }
+
+      setupEventListeners () {
+        // 侧边栏切换
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+          this.toggleSidebar()
+        })
+
+        document.getElementById('mobileToggle').addEventListener('click', () => {
+          this.toggleMobileSidebar()
+        })
+
+        // 主题切换
+        document.getElementById('themeToggle').addEventListener('click', () => {
+          this.toggleTheme()
+        })
+
+        // 表单提交
+        document.getElementById('configForm').addEventListener('submit', (e) => {
+          e.preventDefault()
+          this.saveConfig()
+        })
+
+        // 响应式处理
+        window.addEventListener('resize', () => {
+          if (window.innerWidth > 768) {
+            document.getElementById('sidebar').classList.remove('mobile-open')
+          }
+        })
+      }
+
+      toggleSidebar () {
+        const sidebar = document.getElementById('sidebar')
+        const mainContent = document.getElementById('mainContent')
+        const toggleIcon = document.getElementById('toggleIcon')
+
+        if (window.innerWidth <= 768) {
+          // 移动端逻辑
+          sidebar.classList.toggle('mobile-open')
+        } else {
+          // 桌面端逻辑
+          sidebar.classList.toggle('collapsed')
+          mainContent.classList.toggle('collapsed')
+
+          // 更新切换图标
+          if (sidebar.classList.contains('collapsed')) {
+            toggleIcon.textContent = '›'
+          } else {
+            toggleIcon.textContent = '‹'
+          }
+        }
+      }
+
+      toggleMobileSidebar () {
+        const sidebar = document.getElementById('sidebar')
+        sidebar.classList.toggle('mobile-open')
+      }
+
+      toggleTheme () {
+        const currentTheme = document.documentElement.getAttribute('data-theme')
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+        const themeIcon = document.getElementById('themeIcon')
+
+        document.documentElement.setAttribute('data-theme', newTheme)
+        themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️'
+
+        localStorage.setItem('theme', newTheme)
+      }
+
+      initTheme () {
+        const savedTheme = localStorage.getItem('theme') || 'light'
+        const themeIcon = document.getElementById('themeIcon')
+
+        document.documentElement.setAttribute('data-theme', savedTheme)
+        themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️'
+      }
+
+      async loadConfig () {
+        try {
+          const response = await fetch('/admin/getconfig', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${this.token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+
+          this.config = await response.json()
+          this.populateForm()
+          this.showAlert('配置加载成功', 'success')
+        } catch (error) {
+          console.error('加载配置失败:', error)
+          this.showAlert('加载配置失败: ' + error.message, 'error')
+          // 使用默认配置
+          this.config = {
+            server: {
+              host: "0.0.0.0",
+              port: 3000,
+              log_level: "info"
+            },
+            redis: {
+              enable: true,
+              host: "127.0.0.1",
+              port: 6379,
+              username: "",
+              password: "",
+              db: 0,
+              errcount: 5
+            },
+            admin: {
+              username: "admin",
+              password: "admin"
+            }
+          }
+          this.populateForm()
+        }
+      }
+
+      populateForm () {
+        // 填充服务器配置
+        document.getElementById('serverHost').value = this.config.server?.host || ''
+        document.getElementById('serverPort').value = this.config.server?.port || ''
+        document.getElementById('logLevel').value = this.config.server?.log_level || 'info'
+
+        // 填充Redis配置
+        document.getElementById('redisEnable').checked = this.config.redis?.enable || false
+        document.getElementById('redisHost').value = this.config.redis?.host || ''
+        document.getElementById('redisPort').value = this.config.redis?.port || ''
+        document.getElementById('redisUsername').value = this.config.redis?.username || ''
+        document.getElementById('redisPassword').value = this.config.redis?.password || ''
+        document.getElementById('redisDb').value = this.config.redis?.db || ''
+        document.getElementById('redisErrcount').value = this.config.redis?.errcount || ''
+
+        // 填充管理员配置
+        document.getElementById('adminUsername').value = this.config.admin?.username || ''
+        document.getElementById('adminPassword').value = this.config.admin?.password || ''
+      }
+
+      async saveConfig () {
+        const saveBtn = document.getElementById('saveBtn')
+        const originalText = saveBtn.innerHTML
+
+        // 显示加载状态
+        saveBtn.disabled = true
+        saveBtn.innerHTML = '<span class="loading"></span>保存中...'
+
+        try {
+          const formData = new FormData(document.getElementById('configForm'))
+          const config = this.formDataToConfig(formData)
+
+          const response = await fetch('/admin/setting/save', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(config)
+          })
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+
+          const result = await response.json()
+          this.showAlert('配置保存成功', 'success')
+
+        } catch (error) {
+          console.error('保存配置失败:', error)
+          this.showAlert('保存配置失败: ' + error.message, 'error')
+        } finally {
+          // 恢复按钮状态
+          saveBtn.disabled = false
+          saveBtn.innerHTML = originalText
+        }
+      }
+
+      formDataToConfig (formData) {
+        const config = {
+          server: {},
+          redis: {},
+          admin: {}
+        }
+
+        for (let [key, value] of formData.entries()) {
+          const keys = key.split('.')
+          if (keys.length === 2) {
+            const [section, field] = keys
+
+            // 处理特殊字段类型
+            if (field === 'enable') {
+              config[section][field] = value === 'on'
+            } else if (field === 'port' || field === 'db' || field === 'errcount') {
+              config[section][field] = parseInt(value) || 0
+            } else {
+              config[section][field] = value
+            }
+          }
+        }
+
+        // 处理复选框（未选中时不会出现在formData中）
+        config.redis.enable = document.getElementById('redisEnable').checked
+
+        return config
+      }
+
+      showAlert (message, type) {
+        const alertContainer = document.getElementById('alertContainer')
+        const alert = document.createElement('div')
+        alert.className = `alert alert-${type}`
+        alert.textContent = message
+
+        alertContainer.innerHTML = ''
+        alertContainer.appendChild(alert)
+
+        // 3秒后自动消失
+        setTimeout(() => {
+          alert.remove()
+        }, 3000)
+      }
+    }
+
+    // 初始化管理面板
+    document.addEventListener('DOMContentLoaded', () => {
+      new AdminPanel()
+    });
+  </script>
+</body>
+
+</html>

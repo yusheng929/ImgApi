@@ -16,6 +16,6 @@ pnpm-lock.yaml
 /config/config.json
 /logs
 node_modules
-/public/*
+/public
 /src
 data/*

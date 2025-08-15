@@ -410,7 +410,7 @@
       // 初始化搜索功能
       initializeSearch()
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const socketUrl = `${protocol}//${window.location.host}/ws`
+      const socketUrl = `${protocol}//${window.location.host}/ws/getData`
       const socket = new WebSocket(socketUrl)
       socket.onopen = () => {
         console.log('WebSocket连接已建立')
